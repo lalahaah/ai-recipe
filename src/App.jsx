@@ -9,6 +9,8 @@ import LoginModal from './components/LoginModal';
 import UploadModal from './components/UploadModal';
 import Dashboard from './components/Dashboard';
 import DetailModal from './components/DetailModal';
+import Header from './components/Header';
+import Hero from './components/Hero';
 
 const App = () => {
   const [session, setSession] = useState(null);
@@ -193,81 +195,22 @@ const App = () => {
 
   return (
     <div className="min-h-screen pb-20 bg-slate-900">
-      <header className="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-md border-b border-slate-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => setCurrentView('home')}>
-            <div className="w-8 h-8 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center">
-              <LayoutGrid size={18} className="text-white" />
-            </div>
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
-              AI-Recipe
-            </span>
-          </div>
+      <Header
+        session={session}
+        currentView={currentView}
+        setCurrentView={setCurrentView}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        onUploadClick={onUploadClick}
+        onLoginClick={() => setIsLoginOpen(true)}
+        onLogout={handleLogout}
+      />
 
-          <div className="hidden md:flex flex-1 max-w-md mx-8 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" size={18} />
-            <input
-              type="text"
-              placeholder="스타일, 모델, 키워드로 검색..."
-              className="w-full bg-slate-800 border border-slate-700 rounded-full py-2 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              disabled={currentView === 'dashboard'}
-            />
-          </div>
+      {currentView === 'home' && (
+        <Hero searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      )}
 
-          <div className="flex items-center gap-4">
-            {session ? (
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() => setCurrentView(currentView === 'home' ? 'dashboard' : 'home')}
-                  className={`text-sm font-bold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-2 ${currentView === 'dashboard' ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}
-                >
-                  <LayoutDashboard size={18} />
-                  <span className="hidden sm:inline">Dashboard</span>
-                </button>
-                <div className="h-6 w-px bg-slate-700 mx-1"></div>
-                <button
-                  onClick={handleLogout}
-                  className="text-slate-400 hover:text-white transition-colors p-2"
-                  title="로그아웃"
-                >
-                  <LogOut size={20} />
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => setIsLoginOpen(true)}
-                className="text-slate-400 hover:text-white transition-colors text-sm font-medium hidden sm:flex items-center gap-2"
-              >
-                <User size={18} /> 로그인
-              </button>
-            )}
-
-            <button
-              onClick={onUploadClick}
-              className="bg-white text-slate-900 hover:bg-indigo-50 text-sm font-bold py-2 px-4 rounded-full flex items-center gap-2 transition-colors shadow-lg shadow-indigo-500/20"
-            >
-              <Plus size={16} /> <span className="hidden sm:inline">업로드</span>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <div className="md:hidden px-4 py-3 bg-slate-900 border-b border-slate-700">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" size={18} />
-          <input
-            type="text"
-            placeholder="검색..."
-            className="w-full bg-slate-800 border border-slate-700 rounded-lg py-2 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-indigo-500"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {currentView === 'home' ? (
           <>
             <div className="flex items-center justify-between mb-8">

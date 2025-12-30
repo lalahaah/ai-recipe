@@ -107,10 +107,15 @@ const UploadModal = ({ isOpen, onClose, onSubmit, isUploading }) => {
                             value={formData.model}
                             onChange={(e) => setFormData({ ...formData, model: e.target.value })}
                         >
+                            <option>Midjourney v6.1</option>
                             <option>Midjourney v6</option>
-                            <option>DALL-E 3</option>
-                            <option>Stable Diffusion XL</option>
-                            <option>Niji Journey 5</option>
+                            <option>DALL-E 3 (ChatGPT)</option>
+                            <option>Stable Diffusion 3</option>
+                            <option>Flux.1 [dev/schnell]</option>
+                            <option>Claude 3.5 Sonnet (Artifacts)</option>
+                            <option>Leonardo.ai</option>
+                            <option>Adobe Firefly</option>
+                            <option>Niji Journey 6</option>
                         </select>
                     </div>
 
