@@ -22,20 +22,20 @@ const Header = ({
     return (
         <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'py-4' : 'py-6'
             }`}>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <nav className={`transition-all duration-500 rounded-2xl border flex items-center justify-between px-6 h-16 ${isScrolled
-                        ? 'glass shadow-2xl border-white/10'
-                        : 'bg-transparent border-transparent'
+            <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+                <nav className={`transition-all duration-500 rounded-2xl border flex items-center justify-between px-4 md:px-6 h-14 md:h-16 ${isScrolled
+                    ? 'glass shadow-2xl border-white/10'
+                    : 'bg-transparent border-transparent'
                     }`}>
                     {/* Logo */}
                     <div
-                        className="flex items-center gap-3 cursor-pointer group"
+                        className="flex items-center gap-2 md:gap-3 cursor-pointer group"
                         onClick={() => setCurrentView('home')}
                     >
-                        <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform duration-300">
-                            <LayoutGrid size={22} className="text-white" />
+                        <div className="w-8 h-8 md:w-10 md:h-10 bg-indigo-600 rounded-lg md:rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform duration-300">
+                            <LayoutGrid size={18} md:size={22} className="text-white" />
                         </div>
-                        <span className="text-2xl font-black text-white tracking-tighter">
+                        <span className="text-lg md:text-2xl font-black text-white tracking-tighter">
                             AI<span className="text-indigo-500">.</span>RECIPE
                         </span>
                     </div>
@@ -49,8 +49,8 @@ const Header = ({
                                 <button
                                     onClick={() => setCurrentView(currentView === 'home' ? 'dashboard' : 'home')}
                                     className={`text-sm font-black px-5 py-2.5 rounded-xl transition-all flex items-center gap-2 ${currentView === 'dashboard'
-                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30'
-                                            : 'text-slate-300 hover:text-white hover:bg-white/10'
+                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30'
+                                        : 'text-slate-300 hover:text-white hover:bg-white/10'
                                         }`}
                                 >
                                     <LayoutDashboard size={18} />

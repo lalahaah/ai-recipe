@@ -15,15 +15,29 @@ const PromptCard = ({ post, onLike, onCopy, isDashboard, onDelete, isLiked, onDe
                     <Trash2 size={16} />
                 </button>
             )}
-            <div className="relative group cursor-pointer" onClick={onDetailClick}>
-                <img
-                    src={post.image}
-                    alt={post.title}
-                    className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105"
-                    onError={(e) => { e.target.src = 'https://via.placeholder.com/400x300?text=AI+Image+Error' }}
-                />
+            <div className="relative group cursor-pointer overflow-hidden" onClick={onDetailClick}>
+                {(post.type || 'image') === 'image' ? (
+                    <img
+                        src={post.image}
+                        alt={post.title}
+                        className="w-full h-56 md:h-64 object-cover transition-transform duration-500 group-hover:scale-105"
+                        onError={(e) => { e.target.src = 'https://via.placeholder.com/400x300?text=AI+Image+Error' }}
+                    />
+                ) : (
+                    <div className="w-full h-56 md:h-64 bg-slate-900 border-b border-slate-700/50 flex items-center justify-center">
+                        <video
+                            src={post.image}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            onError={(e) => { e.target.parentElement.innerHTML = '<div class="text-slate-500 text-xs">Video Error</div>' }}
+                        />
+                    </div>
+                )}
                 {post.is_premium && (
-                    <div className="absolute top-3 left-3 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-md">
+                    <div className="absolute top-3 left-3 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-md z-10">
                         <Zap size={10} fill="black" /> PREMIUM
                     </div>
                 )}

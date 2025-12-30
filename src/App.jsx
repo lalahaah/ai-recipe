@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LayoutGrid, LayoutDashboard, Search, Plus, User, LogOut, Image as ImageIcon } from 'lucide-react';
+import { LayoutGrid, LayoutDashboard, Search, Plus, User, LogOut, Image as ImageIcon, Video } from 'lucide-react';
 import { supabase as _supabase } from './lib/supabase';
 
 // Components
@@ -135,6 +135,8 @@ const App = () => {
     }
   };
 
+  const [activeCategory, setActiveCategory] = useState('image'); // 'image' | 'video'
+
   const handleUpload = async (formData) => {
     if (!session) {
       setToast("로그인이 필요한 기능입니다.");
@@ -154,6 +156,7 @@ const App = () => {
             prompt: formData.prompt,
             image: formData.image,
             model: formData.model,
+            type: formData.type || 'image',
             author: authorName,
             likes: 0,
             is_premium: false
@@ -166,6 +169,7 @@ const App = () => {
       setPosts([data[0], ...posts]);
       setIsUploadOpen(false);
       setToast("성공적으로 등록되었습니다!");
+      setActiveCategory(formData.type || 'image'); // 업로드한 카테고리로 이동
     } catch (error) {
       console.error("Error uploading post:", error);
       setToast("업로드 중 오류가 발생했습니다: " + error.message);
@@ -190,10 +194,19 @@ const App = () => {
 
   const filteredPosts = posts.filter(post => {
     const s = searchTerm.toLowerCase();
-    const titleMatch = post.title?.toLowerCase().includes(s);
-    const promptMatch = post.prompt?.toLowerCase().includes(s);
-    const modelMatch = post.model?.toLowerCase().includes(s);
-    return titleMatch || promptMatch || modelMatch;
+    const matchesSearch = (
+      post.title?.toLowerCase().includes(s) ||
+      post.prompt?.toLowerCase().includes(s) ||
+      post.model?.toLowerCase().includes(s)
+    );
+
+    // 만약 검색어가 비어있지 않다면, 모든 카테고리에서 검색 결과를 보여줄지, 
+    // 아니면 현재 탭 내에서만 보여줄지 결정해야 합니다.
+    // 사용자 요청은 "영상 부분도 검색될 수 있게 해달라"는 것이므로, 
+    // 검색어가 있을 때는 카테고리 필터를 완화하거나 스마트하게 전환하는 로직을 추가합니다.
+    const matchesCategory = searchTerm ? true : (post.type || 'image') === activeCategory;
+
+    return matchesSearch && matchesCategory;
   });
 
   return (
@@ -216,23 +229,42 @@ const App = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {currentView === 'home' ? (
           <>
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h1 className="text-2xl font-bold text-white mb-1">Discover AI Recipes</h1>
-                <p className="text-slate-400 text-sm">최고의 프롬프트를 복사해서 바로 사용하세요.</p>
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-12 gap-6">
+              <div className="text-center md:text-left">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2 tracking-tight">Discover AI Recipes</h1>
+                <p className="text-slate-400 text-sm md:text-base font-medium">최고의 프롬프트를 복사해서 바로 사용하세요.</p>
               </div>
-              <div className="flex gap-2">
-                <select className="bg-slate-800 border border-slate-700 text-slate-300 text-sm rounded-lg px-3 py-2 focus:outline-none">
-                  <option>최신순</option>
-                  <option>인기순</option>
+
+              <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-3">
+                {/* Category Tabs */}
+                <div className="flex p-1 bg-slate-800 rounded-xl border border-slate-700 w-full sm:w-auto">
+                  <button
+                    onClick={() => setActiveCategory('image')}
+                    className={`flex-1 sm:flex-none px-4 md:px-6 py-2 rounded-lg text-xs md:text-sm font-black transition-all flex items-center justify-center gap-2 ${activeCategory === 'image' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
+                  >
+                    <ImageIcon size={14} md:size={16} /> Images
+                  </button>
+                  <button
+                    onClick={() => setActiveCategory('video')}
+                    className={`flex-1 sm:flex-none px-4 md:px-6 py-2 rounded-lg text-xs md:text-sm font-black transition-all flex items-center justify-center gap-2 ${activeCategory === 'video' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
+                  >
+                    <Video size={14} md:size={16} className={activeCategory === 'video' ? 'text-white' : 'text-slate-400'} /> Videos
+                  </button>
+                </div>
+
+                <div className="h-10 w-px bg-slate-700 hidden md:block"></div>
+
+                <select className="w-full sm:w-auto bg-slate-800 border border-slate-700 text-slate-300 text-sm font-bold rounded-xl px-4 py-2.5 focus:outline-none focus:border-indigo-500 transition-colors">
+                  <option>Latest</option>
+                  <option>Popular</option>
                 </select>
               </div>
             </div>
 
             {isLoading ? (
               <div className="text-center py-20 flex flex-col items-center">
-                <div className="w-10 h-10 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin mb-4"></div>
-                <p className="text-slate-500">데이터를 불러오는 중입니다...</p>
+                <div className="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin mb-6"></div>
+                <p className="text-slate-400 font-bold">새로운 레시피를 가져오는 중...</p>
               </div>
             ) : (
               <>
