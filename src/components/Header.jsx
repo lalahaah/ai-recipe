@@ -33,7 +33,7 @@ const Header = ({
                         onClick={() => setCurrentView('home')}
                     >
                         <div className="w-8 h-8 md:w-10 md:h-10 bg-indigo-600 rounded-lg md:rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform duration-300">
-                            <LayoutGrid size={18} md:size={22} className="text-white" />
+                            <LayoutGrid className="w-[18px] h-[18px] md:w-[22px] md:h-[22px] text-white" />
                         </div>
                         <span className="text-lg md:text-2xl font-black text-white tracking-tighter">
                             AI<span className="text-indigo-500">.</span>RECIPE

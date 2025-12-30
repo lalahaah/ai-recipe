@@ -41,7 +41,7 @@ const Hero = ({ searchTerm, setSearchTerm }) => {
                         <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-[24px] md:rounded-[28px] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
                         <div className="relative flex items-center bg-[#0f172a] rounded-[20px] md:rounded-[24px] border border-white/5 p-1.5 md:p-2 shadow-2xl">
                             <div className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 text-slate-500">
-                                <Search size={20} md:size={22} />
+                                <Search className="w-5 h-5 md:w-[22px] md:h-[22px]" />
                             </div>
                             <input
                                 type="text"

@@ -139,9 +139,9 @@ const UploadModal = ({ isOpen, onClose, onSubmit, isUploading }) => {
                                 title="파일 업로드"
                             >
                                 {uploadType === 'image' ? (
-                                    <ImageIcon size={18} md:size={20} className={formData.image.startsWith('data:') ? 'text-white' : 'text-slate-400'} />
+                                    <ImageIcon className={`w-4.5 h-4.5 md:w-5 md:h-5 ${formData.image.startsWith('data:') ? 'text-white' : 'text-slate-400'}`} />
                                 ) : (
-                                    <FileVideo size={18} md:size={20} className={formData.image.startsWith('data:') ? 'text-white' : 'text-slate-400'} />
+                                    <FileVideo className={`w-4.5 h-4.5 md:w-5 md:h-5 ${formData.image.startsWith('data:') ? 'text-white' : 'text-slate-400'}`} />
                                 )}
                             </button>
                         </div>

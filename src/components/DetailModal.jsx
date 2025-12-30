@@ -46,7 +46,7 @@ const DetailModal = ({ isOpen, post, onClose, onCopy, onLike, isLiked }) => {
 
                     <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
                         <div className="w-8 h-8 md:w-10 md:h-10 bg-indigo-500/20 rounded-full flex items-center justify-center text-indigo-400">
-                            <User size={16} md:size={20} />
+                            <User className="w-4 h-4 md:w-5 md:h-5" />
                         </div>
                         <div>
                             <p className="text-slate-500 text-[10px] uppercase tracking-widest font-bold">Creator</p>
@@ -58,7 +58,7 @@ const DetailModal = ({ isOpen, post, onClose, onCopy, onLike, isLiked }) => {
                         <div className="bg-slate-900/50 p-3 md:p-4 rounded-xl md:rounded-2xl border border-slate-700/50">
                             <p className="text-slate-500 text-[10px] uppercase tracking-wider font-bold mb-1">AI Model</p>
                             <div className="flex items-center gap-1.5 md:gap-2 text-indigo-400">
-                                <Zap size={12} md:size={14} />
+                                <Zap className="w-3 h-3 md:w-3.5 md:h-3.5" />
                                 <span className="text-xs md:text-sm font-semibold truncate">{post.model}</span>
                             </div>
                         </div>
@@ -69,8 +69,7 @@ const DetailModal = ({ isOpen, post, onClose, onCopy, onLike, isLiked }) => {
                             <p className="text-slate-500 text-[10px] uppercase tracking-wider font-bold mb-1">Appreciation</p>
                             <div className="flex items-center gap-1.5 md:gap-2">
                                 <Heart
-                                    size={12} md:size={14}
-                                    className={`transition-all ${isLiked ? 'fill-pink-500 text-pink-500 scale-110' : 'text-slate-400 group-hover/like:text-pink-400'}`}
+                                    className={`w-3 h-3 md:w-3.5 md:h-3.5 transition-all ${isLiked ? 'fill-pink-500 text-pink-500 scale-110' : 'text-slate-400 group-hover/like:text-pink-400'}`}
                                 />
                                 <span className={`text-xs md:text-sm font-semibold ${isLiked ? 'text-pink-500' : 'text-slate-300'}`}>{post.likes}</span>
                             </div>
@@ -84,7 +83,7 @@ const DetailModal = ({ isOpen, post, onClose, onCopy, onLike, isLiked }) => {
                                 onClick={() => onCopy(post.prompt)}
                                 className="text-indigo-400 hover:text-indigo-300 text-[10px] md:text-xs font-bold flex items-center gap-1.5 transition-colors"
                             >
-                                <Copy size={10} md:size={12} /> Copy Prompt
+                                <Copy className="w-2.5 h-2.5 md:w-3 md:h-3" /> Copy Prompt
                             </button>
                         </div>
                         <div className="bg-slate-900 rounded-xl md:rounded-2xl p-4 md:p-5 border border-slate-700/50 font-mono text-[13px] md:text-sm leading-relaxed text-slate-300 break-words mb-6 md:mb-8 relative group/recipe">
@@ -98,7 +97,7 @@ const DetailModal = ({ isOpen, post, onClose, onCopy, onLike, isLiked }) => {
                             onClick={() => window.open(post.image, '_blank')}
                             className="w-full bg-slate-700 hover:bg-slate-600 text-white text-sm md:text-base font-bold py-3 md:py-4 rounded-xl md:rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95"
                         >
-                            <ExternalLink size={16} md:size={18} /> {(post.type || 'image') === 'image' ? 'Open Original Image' : 'Open Original Video'}
+                            <ExternalLink className="w-4 h-4 md:w-[18px] md:h-[18px]" /> {(post.type || 'image') === 'image' ? 'Open Original Image' : 'Open Original Video'}
                         </button>
                     </div>
                 </div>

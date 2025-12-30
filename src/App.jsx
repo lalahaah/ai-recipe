@@ -242,13 +242,13 @@ const App = () => {
                     onClick={() => setActiveCategory('image')}
                     className={`flex-1 sm:flex-none px-4 md:px-6 py-2 rounded-lg text-xs md:text-sm font-black transition-all flex items-center justify-center gap-2 ${activeCategory === 'image' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
                   >
-                    <ImageIcon size={14} md:size={16} /> Images
+                    <ImageIcon className="w-3.5 h-3.5 md:w-4 md:h-4" /> Images
                   </button>
                   <button
                     onClick={() => setActiveCategory('video')}
                     className={`flex-1 sm:flex-none px-4 md:px-6 py-2 rounded-lg text-xs md:text-sm font-black transition-all flex items-center justify-center gap-2 ${activeCategory === 'video' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
                   >
-                    <Video size={14} md:size={16} className={activeCategory === 'video' ? 'text-white' : 'text-slate-400'} /> Videos
+                    <Video className={`w-3.5 h-3.5 md:w-4 md:h-4 ${activeCategory === 'video' ? 'text-white' : 'text-slate-400'}`} /> Videos
                   </button>
                 </div>
 
