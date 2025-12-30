@@ -188,10 +188,13 @@ const App = () => {
     setIsDetailOpen(true);
   };
 
-  const filteredPosts = posts.filter(post =>
-    post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    post.prompt.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredPosts = posts.filter(post => {
+    const s = searchTerm.toLowerCase();
+    const titleMatch = post.title?.toLowerCase().includes(s);
+    const promptMatch = post.prompt?.toLowerCase().includes(s);
+    const modelMatch = post.model?.toLowerCase().includes(s);
+    return titleMatch || promptMatch || modelMatch;
+  });
 
   return (
     <div className="min-h-screen pb-20 bg-slate-900">

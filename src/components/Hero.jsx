@@ -1,65 +1,81 @@
-import { Search, Zap, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { Search, Zap, Sparkles, Image as ImageIcon, MousePointer2, Cpu } from 'lucide-react';
 
 const Hero = ({ searchTerm, setSearchTerm }) => {
     return (
-        <div className="relative overflow-hidden bg-slate-900 pt-16 pb-20 lg:pt-24 lg:pb-32">
-            {/* Background Decor */}
-            <div className="absolute top-0 left-1/2 -translate_x-1/2 w-full h-full pointer-events-none overflow-hidden">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/10 rounded-full blur-[120px] animate-pulse"></div>
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-500/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-[#020617] pt-20">
+            {/* Dynamic Background Elements (Spline Style) */}
+            <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[120px] animate-float opacity-50"></div>
+                <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[130px] animate-float opacity-40" style={{ animationDelay: '2s', animationDuration: '10s' }}></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full opacity-[0.05]"
+                    style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #fff 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="text-center max-w-3xl mx-auto">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 mb-6 animate-fade-in">
-                        <Sparkles size={14} className="text-indigo-400" />
-                        <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest">The Ultimate Prompt Library</span>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-20">
+                <div className="flex flex-col items-center text-center">
+                    {/* Badge */}
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-white/10 mb-8 animate-fade-in hover:scale-105 transition-transform cursor-default">
+                        <Cpu size={14} className="text-indigo-400" />
+                        <span className="text-[10px] sm:text-xs font-black text-indigo-300 uppercase tracking-[0.2em]">Next-Gen Prompt Engineering</span>
                     </div>
 
-                    <h1 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight leading-tight animate-fade-in">
+                    {/* Main Title */}
+                    <h1 className="text-5xl md:text-8xl font-black text-white mb-8 tracking-tighter leading-[0.9] animate-fade-in relative">
                         상상을 현실로 만드는 <br />
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                        <span className="text-gradient">
                             최고의 AI 레시피
                         </span>
+                        <div className="absolute -top-6 -right-6 md:-top-10 md:-right-10 animate-bounce">
+                            <Sparkles size={40} className="text-yellow-400 opacity-50" />
+                        </div>
                     </h1>
 
-                    <p className="text-lg text-slate-400 mb-10 leading-relaxed animate-fade-in" style={{ animationDelay: '0.1s' }}>
+                    {/* Description */}
+                    <p className="max-w-2xl text-lg md:text-xl text-slate-400 mb-12 leading-relaxed animate-fade-in font-medium" style={{ animationDelay: '0.1s' }}>
                         검증된 프롬프트 하나로 당신의 AI 창작물 퀄리티를 혁신하세요. <br className="hidden md:block" />
                         전 세계 크리에이터들의 노하우를 지금 바로 내 것으로.
                     </p>
 
-                    <div className="relative max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
-                        <input
-                            type="text"
-                            placeholder="어떤 스타일의 이미지를 찾고 있나요?"
-                            className="w-full bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl py-5 pl-14 pr-6 text-white text-lg focus:outline-none focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-2xl"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
+                    {/* Futuristic Search Bar */}
+                    <div className="w-full max-w-3xl relative animate-fade-in group" style={{ animationDelay: '0.2s' }}>
+                        <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-[28px] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                        <div className="relative flex items-center bg-[#0f172a] rounded-[24px] border border-white/5 p-2 shadow-2xl">
+                            <div className="flex items-center justify-center w-12 h-12 text-slate-500">
+                                <Search size={22} />
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="어떤 스타일의 프롬프트를 찾고 있나요?"
+                                className="flex-1 bg-transparent border-none text-white text-xl placeholder:text-slate-600 focus:ring-0 px-2 font-bold"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                            <button className="hidden sm:flex items-center gap-2 bg-white text-black px-6 py-3 rounded-2xl font-black hover:bg-slate-200 transition-colors">
+                                Explore Now
+                            </button>
+                        </div>
                     </div>
 
-                    <div className="mt-8 flex flex-wrap justify-center gap-6 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-                        <div className="flex items-center gap-2 text-slate-500">
-                            <Zap size={14} />
-                            <span className="text-sm font-medium">Fast Copy-Paste</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-slate-500">
-                            <ImageIcon size={14} />
-                            <span className="text-sm font-medium">Real-time Preview</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-slate-500">
-                            <Sparkles size={14} />
-                            <span className="text-sm font-medium">Model Specific</span>
-                        </div>
+                    {/* Stats/Features */}
+                    <div className="mt-16 flex flex-wrap justify-center gap-8 md:gap-16 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+                        {[
+                            { icon: <Zap size={20} />, label: "Instant Access", color: "text-amber-400" },
+                            { icon: <ImageIcon size={20} />, label: "HD Previews", color: "text-emerald-400" },
+                            { icon: <MousePointer2 size={20} />, label: "One-Click Copy", color: "text-indigo-400" }
+                        ].map((feature, i) => (
+                            <div key={i} className="flex items-center gap-3 group cursor-default">
+                                <div className={`p-3 rounded-2xl glass border border-white/5 ${feature.color} group-hover:scale-110 transition-transform duration-300`}>
+                                    {feature.icon}
+                                </div>
+                                <span className="text-sm font-black text-slate-300 group-hover:text-white transition-colors">{feature.label}</span>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
-
-            {/* Grid Pattern Overlay */}
-            <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
         </div>
     );
 };
 
 export default Hero;
+
