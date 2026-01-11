@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Heart, Unlock, Lock, Copy, Trash2, Zap } from 'lucide-react';
 
-const PromptCard = ({ post, onLike, onCopy, isDashboard, onDelete, isLiked, onDetailClick, onAuthorClick, authorProfile }) => {
+const PromptCard = ({ post, onLike, onCopy, isDashboard, onDelete, isLiked, onDetailClick, onAuthorClick, authorProfile, language, t }) => {
     const [showPrompt, setShowPrompt] = useState(false);
 
     return (
@@ -82,7 +82,7 @@ const PromptCard = ({ post, onLike, onCopy, isDashboard, onDelete, isLiked, onDe
 
                 <div className={`mt-auto bg-slate-900/50 rounded-lg p-3 border border-slate-700/50 transition-all duration-300 ${showPrompt ? 'bg-slate-900' : ''}`}>
                     <div className="flex justify-between items-center mb-2">
-                        <span className="text-xs font-bold text-indigo-400 uppercase tracking-wider">Prompt Recipe</span>
+                        <span className="text-xs font-bold text-indigo-400 uppercase tracking-wider">{t?.promptCard?.promptRecipe || 'PROMPT RECIPE'}</span>
                         <button
                             onClick={() => setShowPrompt(!showPrompt)}
                             className="text-slate-400 hover:text-white transition-colors"
@@ -100,14 +100,14 @@ const PromptCard = ({ post, onLike, onCopy, isDashboard, onDelete, isLiked, onDe
                                 onClick={() => onCopy(post.prompt, post)}
                                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2 px-3 rounded flex items-center justify-center gap-2 transition-colors"
                             >
-                                <Copy size={12} /> 프롬프트 복사하기
+                                <Copy size={12} /> {t?.promptCard?.copy || '복사'}
                             </button>
                         </div>
                     ) : (
                         <div onClick={() => setShowPrompt(true)} className="cursor-pointer group">
                             <div className="h-12 w-full bg-slate-700/30 rounded flex items-center justify-center backdrop-blur-sm group-hover:bg-slate-700/50 transition-colors">
                                 <span className="text-xs text-slate-500 flex items-center gap-2 group-hover:text-indigo-400">
-                                    <Lock size={12} /> 레시피 잠금 해제 (Click)
+                                    <Lock size={12} /> {t?.promptCard?.unlockRecipe || '레시피 잠금 해제 (Click)'}
                                 </span>
                             </div>
                         </div>

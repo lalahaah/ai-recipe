@@ -14,6 +14,7 @@ import {
   getDocs
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { translations } from './lib/translations';
 
 // Components
 import Toast from './components/Toast';
@@ -44,6 +45,8 @@ const App = () => {
   const [toast, setToast] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [authorProfiles, setAuthorProfiles] = useState({});
+  const [language, setLanguage] = useState('ko'); // 'ko' | 'en'
+  const t = translations[language]; // current translations
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -331,10 +334,13 @@ const App = () => {
         onUploadClick={onUploadClick}
         onLoginClick={() => setIsLoginOpen(true)}
         onLogout={handleLogout}
+        language={language}
+        setLanguage={setLanguage}
+        t={t}
       />
 
       {currentView === 'home' && (
-        <Hero searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <Hero searchTerm={searchTerm} setSearchTerm={setSearchTerm} language={language} t={t} />
       )}
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -342,8 +348,8 @@ const App = () => {
           <>
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-12 gap-6">
               <div className="text-center md:text-left">
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2 tracking-tight">Discover AI Recipes</h1>
-                <p className="text-slate-400 text-sm md:text-base font-medium">최고의 프롬프트를 복사해서 바로 사용하세요.</p>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2 tracking-tight">{t.main.title}</h1>
+                <p className="text-slate-400 text-sm md:text-base font-medium">{t.main.subtitle}</p>
               </div>
 
               <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-3">
@@ -353,21 +359,21 @@ const App = () => {
                     onClick={() => setActiveCategory('image')}
                     className={`flex-1 sm:flex-none px-4 md:px-6 py-2 rounded-lg text-xs md:text-sm font-black transition-all flex items-center justify-center gap-2 ${activeCategory === 'image' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
                   >
-                    <ImageIcon className="w-3.5 h-3.5 md:w-4 md:h-4" /> Images
+                    <ImageIcon className="w-3.5 h-3.5 md:w-4 md:h-4" /> {t.main.categories.images}
                   </button>
                   <button
                     onClick={() => setActiveCategory('video')}
                     className={`flex-1 sm:flex-none px-4 md:px-6 py-2 rounded-lg text-xs md:text-sm font-black transition-all flex items-center justify-center gap-2 ${activeCategory === 'video' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
                   >
-                    <Video className={`w-3.5 h-3.5 md:w-4 md:h-4 ${activeCategory === 'video' ? 'text-white' : 'text-slate-400'}`} /> Videos
+                    <Video className={`w-3.5 h-3.5 md:w-4 md:h-4 ${activeCategory === 'video' ? 'text-white' : 'text-slate-400'}`} /> {t.main.categories.videos}
                   </button>
                 </div>
 
                 <div className="h-10 w-px bg-slate-700 hidden md:block"></div>
 
                 <select className="w-full sm:w-auto bg-slate-800 border border-slate-700 text-slate-300 text-sm font-bold rounded-xl px-4 py-2.5 focus:outline-none focus:border-indigo-500 transition-colors">
-                  <option>Latest</option>
-                  <option>Popular</option>
+                  <option>{t.main.sort.latest}</option>
+                  <option>{t.main.sort.popular}</option>
                 </select>
               </div>
             </div>
@@ -390,6 +396,8 @@ const App = () => {
                       onDetailClick={() => onPostClick(post)}
                       onAuthorClick={handleAuthorClick}
                       authorProfile={authorProfiles[post.author]}
+                      language={language}
+                      t={t}
                     />
                   ))}
                 </div>
@@ -422,6 +430,8 @@ const App = () => {
             likedPosts={likedPosts}
             onPostClick={onPostClick}
             authorProfiles={authorProfiles}
+            language={language}
+            t={t}
           />
         )}
       </main>
@@ -433,6 +443,8 @@ const App = () => {
         onCopy={handleCopy}
         onLike={handleLike}
         isLiked={selectedPost ? likedPosts.includes(selectedPost.id) : false}
+        language={language}
+        t={t}
       />
 
       <LoginModal
@@ -442,6 +454,8 @@ const App = () => {
           setToast("환영합니다!");
           setIsLoginOpen(false);
         }}
+        language={language}
+        t={t}
       />
 
       <ArtistGalleryModal
@@ -454,6 +468,8 @@ const App = () => {
         likedPosts={likedPosts}
         onPostClick={onPostClick}
         authorProfiles={authorProfiles}
+        language={language}
+        t={t}
       />
 
       <UploadModal
@@ -461,11 +477,13 @@ const App = () => {
         onClose={() => setIsUploadOpen(false)}
         onSubmit={handleUpload}
         isUploading={isUploading}
+        language={language}
+        t={t}
       />
 
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
 
-      <Footer setCurrentView={setCurrentView} currentView={currentView} />
+      <Footer setCurrentView={setCurrentView} currentView={currentView} language={language} setLanguage={setLanguage} t={t} />
     </div>
   );
 };

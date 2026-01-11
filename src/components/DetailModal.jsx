@@ -1,6 +1,6 @@
 import { X, Copy, Heart, Zap, User, ExternalLink } from 'lucide-react';
 
-const DetailModal = ({ isOpen, post, onClose, onCopy, onLike, isLiked }) => {
+const DetailModal = ({ isOpen, post, onClose, onCopy, onLike, isLiked, language, t }) => {
     if (!isOpen || !post) return null;
 
     return (
@@ -49,14 +49,14 @@ const DetailModal = ({ isOpen, post, onClose, onCopy, onLike, isLiked }) => {
                             <User className="w-4 h-4 md:w-5 md:h-5" />
                         </div>
                         <div>
-                            <p className="text-slate-500 text-[10px] uppercase tracking-widest font-bold">Creator</p>
+                            <p className="text-slate-500 text-[10px] uppercase tracking-widest font-bold">{t.detail.creator}</p>
                             <p className="text-white text-sm md:text-base font-medium">{post.author}</p>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 md:gap-4 mb-6 md:mb-8">
                         <div className="bg-slate-900/50 p-3 md:p-4 rounded-xl md:rounded-2xl border border-slate-700/50">
-                            <p className="text-slate-500 text-[10px] uppercase tracking-wider font-bold mb-1">AI Model</p>
+                            <p className="text-slate-500 text-[10px] uppercase tracking-wider font-bold mb-1">{t.detail.aiModel}</p>
                             <div className="flex items-center gap-1.5 md:gap-2 text-indigo-400">
                                 <Zap className="w-3 h-3 md:w-3.5 md:h-3.5" />
                                 <span className="text-xs md:text-sm font-semibold truncate">{post.model}</span>
@@ -66,7 +66,7 @@ const DetailModal = ({ isOpen, post, onClose, onCopy, onLike, isLiked }) => {
                             className="bg-slate-900/50 p-3 md:p-4 rounded-xl md:rounded-2xl border border-slate-700/50 cursor-pointer group/like"
                             onClick={() => onLike(post.id, post.likes)}
                         >
-                            <p className="text-slate-500 text-[10px] uppercase tracking-wider font-bold mb-1">Appreciation</p>
+                            <p className="text-slate-500 text-[10px] uppercase tracking-wider font-bold mb-1">{t.detail.appreciation}</p>
                             <div className="flex items-center gap-1.5 md:gap-2">
                                 <Heart
                                     className={`w-3 h-3 md:w-3.5 md:h-3.5 transition-all ${isLiked ? 'fill-pink-500 text-pink-500 scale-110' : 'text-slate-400 group-hover/like:text-pink-400'}`}
@@ -78,12 +78,12 @@ const DetailModal = ({ isOpen, post, onClose, onCopy, onLike, isLiked }) => {
 
                     <div className="flex-grow">
                         <div className="flex justify-between items-center mb-3">
-                            <label className="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider">Prompt Recipe</label>
+                            <label className="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider">{t.detail.promptRecipe}</label>
                             <button
                                 onClick={() => onCopy(post.prompt)}
                                 className="text-indigo-400 hover:text-indigo-300 text-[10px] md:text-xs font-bold flex items-center gap-1.5 transition-colors"
                             >
-                                <Copy className="w-2.5 h-2.5 md:w-3 md:h-3" /> Copy Prompt
+                                <Copy className="w-2.5 h-2.5 md:w-3 md:h-3" /> {t.detail.copyPrompt}
                             </button>
                         </div>
                         <div className="bg-slate-900 rounded-xl md:rounded-2xl p-4 md:p-5 border border-slate-700/50 font-mono text-[13px] md:text-sm leading-relaxed text-slate-300 break-words mb-6 md:mb-8 relative group/recipe">
@@ -97,7 +97,7 @@ const DetailModal = ({ isOpen, post, onClose, onCopy, onLike, isLiked }) => {
                             onClick={() => window.open(post.image, '_blank')}
                             className="w-full bg-slate-700 hover:bg-slate-600 text-white text-sm md:text-base font-bold py-3 md:py-4 rounded-xl md:rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95"
                         >
-                            <ExternalLink className="w-4 h-4 md:w-[18px] md:h-[18px]" /> {(post.type || 'image') === 'image' ? 'Open Original Image' : 'Open Original Video'}
+                            <ExternalLink className="w-4 h-4 md:w-[18px] md:h-[18px]" /> {(post.type || 'image') === 'image' ? t.detail.openImage : t.detail.openVideo}
                         </button>
                     </div>
                 </div>

@@ -4,7 +4,7 @@ import PromptCard from './PromptCard';
 import { db } from '../lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
-const ArtistGalleryModal = ({ isOpen, onClose, authorName, posts, onCopy, onLike, likedPosts, onPostClick, authorProfiles }) => {
+const ArtistGalleryModal = ({ isOpen, onClose, authorName, posts, onCopy, onLike, likedPosts, onPostClick, authorProfiles, language, t }) => {
     const [authorProfile, setAuthorProfile] = useState(null);
 
     // 작가의 작품 필터링
@@ -45,7 +45,7 @@ const ArtistGalleryModal = ({ isOpen, onClose, authorName, posts, onCopy, onLike
             <div className="bg-slate-800 rounded-2xl w-full max-w-6xl border border-slate-700 shadow-2xl my-8">
                 {/* 헤더 */}
                 <div className="flex justify-between items-center p-6 border-b border-slate-700">
-                    <h2 className="text-2xl font-bold text-white">작가 갤러리</h2>
+                    <h2 className="text-2xl font-bold text-white">{language === 'ko' ? '작가 갤러리' : 'Artist Gallery'}</h2>
                     <button
                         onClick={onClose}
                         className="text-slate-400 hover:text-white transition-colors"
@@ -80,22 +80,22 @@ const ArtistGalleryModal = ({ isOpen, onClose, authorName, posts, onCopy, onLike
                             {/* 통계 */}
                             <div className="flex flex-wrap gap-4 justify-center md:justify-start">
                                 <div className="bg-slate-900/50 backdrop-blur-sm px-4 py-2 rounded-lg border border-slate-700">
-                                    <span className="text-slate-400 text-sm">전체 작품</span>
+                                    <span className="text-slate-400 text-sm">{language === 'ko' ? '전체 작품' : 'Total'}</span>
                                     <span className="ml-2 text-white font-bold">{artistPosts.length}</span>
                                 </div>
                                 <div className="bg-slate-900/50 backdrop-blur-sm px-4 py-2 rounded-lg border border-slate-700">
                                     <ImageIcon className="inline-block text-blue-400 mr-1" size={16} />
-                                    <span className="text-slate-400 text-sm">이미지</span>
+                                    <span className="text-slate-400 text-sm">{language === 'ko' ? '이미지' : 'Images'}</span>
                                     <span className="ml-2 text-blue-400 font-bold">{imageCount}</span>
                                 </div>
                                 <div className="bg-slate-900/50 backdrop-blur-sm px-4 py-2 rounded-lg border border-slate-700">
                                     <Video className="inline-block text-purple-400 mr-1" size={16} />
-                                    <span className="text-slate-400 text-sm">영상</span>
+                                    <span className="text-slate-400 text-sm">{language === 'ko' ? '영상' : 'Videos'}</span>
                                     <span className="ml-2 text-purple-400 font-bold">{videoCount}</span>
                                 </div>
                                 <div className="bg-slate-900/50 backdrop-blur-sm px-4 py-2 rounded-lg border border-slate-700">
                                     <Heart className="inline-block text-pink-400 mr-1" size={16} />
-                                    <span className="text-slate-400 text-sm">받은 좋아요</span>
+                                    <span className="text-slate-400 text-sm">{language === 'ko' ? '받은 좋아요' : 'Total Likes'}</span>
                                     <span className="ml-2 text-pink-400 font-bold">{totalLikes}</span>
                                 </div>
                             </div>
@@ -120,6 +120,8 @@ const ArtistGalleryModal = ({ isOpen, onClose, authorName, posts, onCopy, onLike
                                     }}
                                     isDashboard={false}
                                     authorProfile={authorProfiles[post.author]}
+                                    language={language}
+                                    t={t}
                                 />
                             ))}
                         </div>

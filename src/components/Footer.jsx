@@ -1,6 +1,6 @@
 import { Mail, MapPin, Phone, Building2 } from 'lucide-react';
 
-const Footer = ({ setCurrentView }) => {
+const Footer = ({ setCurrentView, language, setLanguage, t }) => {
     const currentYear = new Date().getFullYear();
 
     return (
@@ -9,55 +9,60 @@ const Footer = ({ setCurrentView }) => {
                 {/* 상단 링크 섹션 */}
                 <div className="flex flex-wrap justify-start gap-4 md:gap-8 mb-8">
                     <a href="#" className="text-sm font-bold text-slate-300 hover:text-white transition-colors">
-                        개인정보 처리방침
+                        {t.footer.privacy}
                     </a>
                     <a href="#" className="text-sm font-bold text-slate-300 hover:text-white transition-colors">
-                        서비스 이용약관
+                        {t.footer.terms}
                     </a>
                     <a href="#" className="text-sm font-bold text-slate-300 hover:text-white transition-colors">
-                        오류 제보
+                        {t.footer.report}
                     </a>
-                    <a href="#" className="text-sm font-bold text-slate-300 hover:text-white transition-colors">
-                        English
-                    </a>
+                    <button
+                        onClick={() => setLanguage(language === 'ko' ? 'en' : 'ko')}
+                        className="text-sm font-bold text-slate-300 hover:text-white transition-colors"
+                    >
+                        {t.footer.language}
+                    </button>
                 </div>
 
-                {/* 사업자 정보 섹션 */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-                    {/* 왼쪽: 회사 기본 정보 */}
-                    <div className="space-y-3">
-                        <div className="flex items-start gap-3">
-                            <Building2 size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
-                            <div>
-                                <p className="text-sm text-slate-300 font-medium">Next Engine Idea Lab (내일)</p>
-                                <p className="text-xs text-slate-500">대표자명: OOO</p>
+                {/* 사업자 정보 섹션 - 한국어일 때만 표시 */}
+                {language === 'ko' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                        {/* 왼쪽: 회사 기본 정보 */}
+                        <div className="space-y-3">
+                            <div className="flex items-start gap-3">
+                                <Building2 size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
+                                <div>
+                                    <p className="text-sm text-slate-300 font-medium">{t.footer.company}</p>
+                                    <p className="text-xs text-slate-500">{t.footer.ceo}</p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-start gap-3">
+                                <MapPin size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
+                                <p className="text-xs text-slate-500">{t.footer.address}</p>
                             </div>
                         </div>
 
-                        <div className="flex items-start gap-3">
-                            <MapPin size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
-                            <p className="text-xs text-slate-500">서울특별시 마포구 OOO</p>
+                        {/* 오른쪽: 연락처 정보 */}
+                        <div className="space-y-3">
+                            <div className="flex items-start gap-3">
+                                <Phone size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
+                                <p className="text-xs text-slate-500">{t.footer.phone}</p>
+                            </div>
+
+                            <div className="flex items-start gap-3">
+                                <Mail size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
+                                <p className="text-xs text-slate-500">{t.footer.email}</p>
+                            </div>
+
+                            <div className="flex items-start gap-3">
+                                <Building2 size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
+                                <p className="text-xs text-slate-500">{t.footer.businessNumber}</p>
+                            </div>
                         </div>
                     </div>
-
-                    {/* 오른쪽: 연락처 정보 */}
-                    <div className="space-y-3">
-                        <div className="flex items-start gap-3">
-                            <Phone size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
-                            <p className="text-xs text-slate-500">유선번호: OOO-OOOO</p>
-                        </div>
-
-                        <div className="flex items-start gap-3">
-                            <Mail size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
-                            <p className="text-xs text-slate-500">OOOO@nextengine.lab</p>
-                        </div>
-
-                        <div className="flex items-start gap-3">
-                            <Building2 size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
-                            <p className="text-xs text-slate-500">사업자등록번호: OOO-OO-OOOO</p>
-                        </div>
-                    </div>
-                </div>
+                )}
 
                 {/* 하단: 로고 및 Copyright */}
                 <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-slate-800">
@@ -75,7 +80,7 @@ const Footer = ({ setCurrentView }) => {
                     </div>
 
                     <p className="text-xs text-slate-500">
-                        © {currentYear} Next Engine Idea Lab. All rights reserved.
+                        © {currentYear} {t.footer.copyright}
                     </p>
                 </div>
             </div>

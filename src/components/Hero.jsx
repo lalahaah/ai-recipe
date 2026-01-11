@@ -1,6 +1,6 @@
 import { Search, Zap, Sparkles, Image as ImageIcon, MousePointer2, Cpu } from 'lucide-react';
 
-const Hero = ({ searchTerm, setSearchTerm }) => {
+const Hero = ({ searchTerm, setSearchTerm, language, t }) => {
     return (
         <div className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-[#020617] pt-20">
             {/* Dynamic Background Elements (Spline Style) */}
@@ -16,14 +16,14 @@ const Hero = ({ searchTerm, setSearchTerm }) => {
                     {/* Badge */}
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-white/10 mb-6 md:mb-8 animate-fade-in hover:scale-105 transition-transform cursor-default">
                         <Cpu size={14} className="text-indigo-400" />
-                        <span className="text-[10px] sm:text-xs font-black text-indigo-300 uppercase tracking-[0.2em]">Next-Gen Prompt Engineering</span>
+                        <span className="text-[10px] sm:text-xs font-black text-indigo-300 uppercase tracking-[0.2em]">{t.hero.badge}</span>
                     </div>
 
                     {/* Main Title */}
                     <h1 className="text-4xl sm:text-5xl md:text-8xl font-black text-white mb-6 md:mb-8 tracking-tighter leading-[1] md:leading-[0.9] animate-fade-in relative">
-                        상상을 현실로 만드는 <br />
+                        {t.hero.title} <br />
                         <span className="text-gradient">
-                            최고의 AI 레시피
+                            {t.hero.titleHighlight}
                         </span>
                         <div className="absolute -top-4 -right-4 md:-top-10 md:-right-10 animate-bounce">
                             <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-8 md:w-16 h-8 md:h-16">
@@ -42,8 +42,8 @@ const Hero = ({ searchTerm, setSearchTerm }) => {
 
                     {/* Description */}
                     <p className="max-w-xl text-base md:text-xl text-slate-400 mb-10 md:mb-12 leading-relaxed animate-fade-in font-medium px-4 md:px-0" style={{ animationDelay: '0.1s' }}>
-                        검증된 프롬프트 하나로 당신의 AI 창작물 퀄리티를 혁신하세요. <br className="hidden md:block" />
-                        전 세계 크리에이터들의 노하우를 지금 바로 내 것으로.
+                        {t.hero.description} <br className="hidden md:block" />
+                        {t.hero.descriptionSub}
                     </p>
 
                     {/* Futuristic Search Bar */}
@@ -55,13 +55,13 @@ const Hero = ({ searchTerm, setSearchTerm }) => {
                             </div>
                             <input
                                 type="text"
-                                placeholder="어떤 스타일의 프롬프트를 찾고 있나요?"
+                                placeholder={t.hero.searchPlaceholder}
                                 className="flex-1 bg-transparent border-none text-base md:text-xl placeholder:text-slate-600 focus:ring-0 px-2 font-bold"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                             <button className="hidden sm:flex items-center gap-2 bg-white text-black px-6 py-3 rounded-2xl font-black hover:bg-slate-200 transition-colors">
-                                Explore Now
+                                {t.hero.searchButton}
                             </button>
                         </div>
                     </div>
@@ -69,9 +69,9 @@ const Hero = ({ searchTerm, setSearchTerm }) => {
                     {/* Stats/Features */}
                     <div className="mt-16 flex flex-wrap justify-center gap-8 md:gap-16 animate-fade-in" style={{ animationDelay: '0.3s' }}>
                         {[
-                            { icon: <Zap size={20} />, label: "Instant Access", color: "text-amber-400" },
-                            { icon: <ImageIcon size={20} />, label: "HD Previews", color: "text-emerald-400" },
-                            { icon: <MousePointer2 size={20} />, label: "One-Click Copy", color: "text-indigo-400" }
+                            { icon: <Zap size={20} />, label: t.hero.features.instant, color: "text-amber-400" },
+                            { icon: <ImageIcon size={20} />, label: t.hero.features.preview, color: "text-emerald-400" },
+                            { icon: <MousePointer2 size={20} />, label: t.hero.features.copy, color: "text-indigo-400" }
                         ].map((feature, i) => (
                             <div key={i} className="flex items-center gap-3 group cursor-default">
                                 <div className={`p-3 rounded-2xl glass border border-white/5 ${feature.color} group-hover:scale-110 transition-transform duration-300`}>

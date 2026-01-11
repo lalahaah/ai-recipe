@@ -3,7 +3,7 @@ import { X, Mail, Key } from 'lucide-react';
 import { auth, googleProvider } from '../lib/firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 
-const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
+const LoginModal = ({ isOpen, onClose, onLoginSuccess, language, t }) => {
     const [isSignUp, setIsSignUp] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -21,7 +21,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
             onClose();
         } catch (err) {
             console.error("Google Auth error:", err);
-            setError("구글 로그인에 실패했습니다.");
+            setError(language === 'ko' ? "구글 로그인에 실패했습니다." : "Google login failed.");
         } finally {
             setLoading(false);
         }
@@ -35,7 +35,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
         try {
             if (isSignUp) {
                 await createUserWithEmailAndPassword(auth, email, password);
-                alert("회원가입 성공! 자동 로그인됩니다.");
+                alert(language === 'ko' ? "회원가입 성공! 자동 로그인됩니다." : "Sign up successful! Auto logging in.");
             } else {
                 await signInWithEmailAndPassword(auth, email, password);
             }
@@ -59,7 +59,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
             <div className="bg-slate-800 rounded-2xl w-full max-w-sm border border-slate-700 shadow-2xl p-8">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold text-white">
-                        {isSignUp ? "회원가입" : "로그인"}
+                        {isSignUp ? t.login.signupTitle : t.login.title}
                     </h2>
                     <button onClick={onClose} className="text-slate-400 hover:text-white">
                         <X size={24} />
@@ -96,7 +96,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                                 fill="#EA4335"
                             />
                         </svg>
-                        Google로 계속하기
+                        {t.login.googleLogin}
                     </button>
 
                     <div className="relative py-2">
@@ -104,19 +104,19 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                             <div className="w-full border-t border-slate-700"></div>
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-slate-800 px-2 text-slate-500">또는</span>
+                            <span className="bg-slate-800 px-2 text-slate-500">{language === 'ko' ? '또는' : 'or'}</span>
                         </div>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-slate-400 mb-1">이메일</label>
+                            <label className="block text-sm font-medium text-slate-400 mb-1">{t.login.email}</label>
                             <div className="relative">
                                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                                 <input
                                     type="email"
                                     required
-                                    placeholder="hello@ai-recipe.ai"
+                                    placeholder={t.login.emailPlaceholder}
                                     className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 pl-10 pr-4 text-white focus:outline-none focus:border-indigo-500"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -125,7 +125,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-slate-400 mb-1">비밀번호</label>
+                            <label className="block text-sm font-medium text-slate-400 mb-1">{t.login.password}</label>
                             <div className="relative">
                                 <Key className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                                 <input
@@ -144,18 +144,18 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                             disabled={loading}
                             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg transition-colors flex justify-center items-center gap-2"
                         >
-                            {loading ? "처리 중..." : (isSignUp ? "가입하기" : "로그인하기")}
+                            {loading ? (isSignUp ? t.login.signingUp : t.login.loggingIn) : (isSignUp ? t.login.signupButton : t.login.loginButton)}
                         </button>
                     </form>
                 </div>
 
                 <div className="mt-6 text-center text-sm text-slate-400">
-                    {isSignUp ? "이미 계정이 있으신가요? " : "계정이 없으신가요? "}
+                    {isSignUp ? t.login.switchToLogin.split('?')[0] + '? ' : t.login.switchToSignup.split('?')[0] + '? '}
                     <button
                         onClick={() => setIsSignUp(!isSignUp)}
                         className="text-indigo-400 hover:text-indigo-300 font-bold ml-1 underline"
                     >
-                        {isSignUp ? "로그인" : "회원가입"}
+                        {isSignUp ? t.login.switchToLogin.split('?')[1].trim() : t.login.switchToSignup.split('?')[1].trim()}
                     </button>
                 </div>
             </div>

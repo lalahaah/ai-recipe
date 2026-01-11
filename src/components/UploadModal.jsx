@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Plus, X, Image as ImageIcon, Video, FileVideo, AlertCircle } from 'lucide-react';
 
-const UploadModal = ({ isOpen, onClose, onSubmit, isUploading }) => {
+const UploadModal = ({ isOpen, onClose, onSubmit, isUploading, language, t }) => {
     const fileInputRef = useRef(null);
     const videoInputRef = useRef(null);
     const [uploadType, setUploadType] = useState('image'); // 'image' | 'video'
@@ -44,7 +44,7 @@ const UploadModal = ({ isOpen, onClose, onSubmit, isUploading }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (uploadType === 'video' && formData.image.startsWith('data:video') && formData.image.length > 5 * 1024 * 1024 * 1.37) {
-            setError("영상 파일 용량이 5MB를 초과했습니다.");
+            setError(t.upload.errorVideoSize);
             return;
         }
         onSubmit({ ...formData, type: uploadType });
@@ -55,7 +55,7 @@ const UploadModal = ({ isOpen, onClose, onSubmit, isUploading }) => {
         if (file) {
             // 용량 체크 (5MB)
             if (type === 'video' && file.size > 5 * 1024 * 1024) {
-                setError("영상 파일은 5MB 이하만 업로드 가능합니다.");
+                setError(t.upload.errorVideoOnly);
                 return;
             }
 
@@ -83,7 +83,7 @@ const UploadModal = ({ isOpen, onClose, onSubmit, isUploading }) => {
             <div className="bg-slate-800 rounded-2xl w-full max-w-lg border border-slate-700 shadow-2xl overflow-hidden">
                 <div className="flex justify-between items-center p-6 border-b border-slate-700">
                     <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                        <Plus className="text-indigo-500" /> 새 프롬프트 등록
+                        <Plus className="text-indigo-500" /> {t.upload.title}
                     </h2>
                     <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
                         <X size={24} />
@@ -96,13 +96,13 @@ const UploadModal = ({ isOpen, onClose, onSubmit, isUploading }) => {
                         onClick={() => handleTypeChange('image')}
                         className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${uploadType === 'image' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
                     >
-                        <ImageIcon size={16} /> 이미지
+                        <ImageIcon size={16} /> {t.upload.imageTab}
                     </button>
                     <button
                         onClick={() => handleTypeChange('video')}
                         className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${uploadType === 'video' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
                     >
-                        <Video size={16} /> 영상
+                        <Video size={16} /> {t.upload.videoTab}
                     </button>
                 </div>
 
@@ -114,12 +114,12 @@ const UploadModal = ({ isOpen, onClose, onSubmit, isUploading }) => {
                     )}
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">작품 제목</label>
+                        <label className="block text-sm font-medium text-slate-300 mb-1">{t.upload.recipeTitle}</label>
                         <input
                             type="text"
                             required
                             className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500 transition-colors"
-                            placeholder="예: 사이버펑크 고양이"
+                            placeholder={t.upload.titlePlaceholder}
                             value={formData.title}
                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         />
@@ -127,15 +127,15 @@ const UploadModal = ({ isOpen, onClose, onSubmit, isUploading }) => {
 
                     <div>
                         <label className="block text-sm font-medium text-slate-300 mb-1">
-                            {uploadType === 'image' ? '이미지' : '영상'} (URL 또는 파일 업로드)
+                            {uploadType === 'image' ? t.upload.mediaLabel : t.upload.mediaLabelVideo}
                         </label>
                         <div className="flex gap-2">
                             <input
                                 type="text"
                                 required
                                 className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500 transition-colors text-sm"
-                                placeholder="https://... 또는 우측 버튼으로 업로드"
-                                value={formData.image.startsWith('data:') ? '파일 업로드됨' : formData.image}
+                                placeholder={t.upload.mediaPlaceholder}
+                                value={formData.image.startsWith('data:') ? t.upload.fileUploaded : formData.image}
                                 onChange={(e) => setFormData({ ...formData, image: e.target.value })}
                             />
                             <input
@@ -160,8 +160,8 @@ const UploadModal = ({ isOpen, onClose, onSubmit, isUploading }) => {
                         </div>
                         <p className="text-[10px] md:text-xs text-slate-500 mt-1">
                             {uploadType === 'image'
-                                ? '* 이미지 URL을 입력하거나 직접 업로드하세요.'
-                                : '* 영상 URL을 입력하거나 직접 업로드하세요. (최대 5MB)'}
+                                ? t.upload.mediaHelpImage
+                                : t.upload.mediaHelpVideo}
                         </p>
                     </div>
 
@@ -183,7 +183,7 @@ const UploadModal = ({ isOpen, onClose, onSubmit, isUploading }) => {
                     )}
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">사용된 모델</label>
+                        <label className="block text-sm font-medium text-slate-300 mb-1">{t.upload.aiModel}</label>
                         <select
                             className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500"
                             value={formData.model}
@@ -196,11 +196,11 @@ const UploadModal = ({ isOpen, onClose, onSubmit, isUploading }) => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">프롬프트 (Recipe)</label>
+                        <label className="block text-sm font-medium text-slate-300 mb-1">{t.upload.promptRecipe}</label>
                         <textarea
                             required
                             className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white h-32 resize-none focus:outline-none focus:border-indigo-500 transition-colors font-mono text-sm"
-                            placeholder="작품을 생성하기 위해 사용한 프롬프트를 입력하세요..."
+                            placeholder={t.upload.promptPlaceholder}
                             value={formData.prompt}
                             onChange={(e) => setFormData({ ...formData, prompt: e.target.value })}
                         ></textarea>
@@ -211,7 +211,7 @@ const UploadModal = ({ isOpen, onClose, onSubmit, isUploading }) => {
                         disabled={isUploading}
                         className={`w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 rounded-lg shadow-lg transform active:scale-95 transition-all flex items-center justify-center gap-2 ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                        {isUploading ? '저장 중...' : '갤러리에 등록하기'}
+                        {isUploading ? t.upload.uploading : t.upload.uploadButton}
                     </button>
                 </form>
             </div>

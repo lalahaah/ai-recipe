@@ -5,7 +5,7 @@ import ProfileEditModal from './ProfileEditModal';
 import { db } from '../lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
-const Dashboard = ({ user, posts, onDelete, onCopy, onLike, likedPosts, onPostClick, authorProfiles }) => {
+const Dashboard = ({ user, posts, onDelete, onCopy, onLike, likedPosts, onPostClick, authorProfiles, language, t }) => {
     const [isProfileEditOpen, setIsProfileEditOpen] = useState(false);
     const [userProfile, setUserProfile] = useState(null);
 
@@ -41,7 +41,7 @@ const Dashboard = ({ user, posts, onDelete, onCopy, onLike, likedPosts, onPostCl
     };
 
     const displayName = userProfile?.displayName || user.email.split('@')[0];
-    const bio = userProfile?.bio || "안녕하세요! AI Recipe에 오신 것을 환영합니다.";
+    const bio = userProfile?.bio || (language === 'ko' ? "안녕하세요! AI Recipe에 오신 것을 환영합니다." : "Welcome to AI Recipe!");
     const photoURL = userProfile?.photoURL;
 
     return (
@@ -74,7 +74,7 @@ const Dashboard = ({ user, posts, onDelete, onCopy, onLike, likedPosts, onPostCl
                                     className="inline-flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors text-sm font-medium"
                                 >
                                     <Edit2 size={16} />
-                                    프로필 수정
+                                    {t.dashboard.editProfile}
                                 </button>
                             </div>
                             <p className="text-slate-400 mb-4">{bio}</p>
@@ -87,7 +87,7 @@ const Dashboard = ({ user, posts, onDelete, onCopy, onLike, likedPosts, onPostCl
                         <div className="bg-slate-900/50 backdrop-blur-sm p-4 rounded-xl border border-slate-700 text-center">
                             <div className="flex items-center justify-center gap-2 mb-2">
                                 <LayoutDashboard className="text-indigo-400" size={20} />
-                                <p className="text-slate-400 text-xs uppercase tracking-wider font-bold">전체</p>
+                                <p className="text-slate-400 text-xs uppercase tracking-wider font-bold">{t.dashboard.stats.total}</p>
                             </div>
                             <p className="text-3xl font-bold text-white">{totalWorks}</p>
                         </div>
@@ -95,7 +95,7 @@ const Dashboard = ({ user, posts, onDelete, onCopy, onLike, likedPosts, onPostCl
                         <div className="bg-slate-900/50 backdrop-blur-sm p-4 rounded-xl border border-slate-700 text-center">
                             <div className="flex items-center justify-center gap-2 mb-2">
                                 <ImageIcon className="text-blue-400" size={20} />
-                                <p className="text-slate-400 text-xs uppercase tracking-wider font-bold">이미지</p>
+                                <p className="text-slate-400 text-xs uppercase tracking-wider font-bold">{t.dashboard.stats.images}</p>
                             </div>
                             <p className="text-3xl font-bold text-blue-500">{imageWorks}</p>
                         </div>
@@ -103,7 +103,7 @@ const Dashboard = ({ user, posts, onDelete, onCopy, onLike, likedPosts, onPostCl
                         <div className="bg-slate-900/50 backdrop-blur-sm p-4 rounded-xl border border-slate-700 text-center">
                             <div className="flex items-center justify-center gap-2 mb-2">
                                 <Video className="text-purple-400" size={20} />
-                                <p className="text-slate-400 text-xs uppercase tracking-wider font-bold">영상</p>
+                                <p className="text-slate-400 text-xs uppercase tracking-wider font-bold">{t.dashboard.stats.videos}</p>
                             </div>
                             <p className="text-3xl font-bold text-purple-500">{videoWorks}</p>
                         </div>
@@ -111,7 +111,7 @@ const Dashboard = ({ user, posts, onDelete, onCopy, onLike, likedPosts, onPostCl
                         <div className="bg-slate-900/50 backdrop-blur-sm p-4 rounded-xl border border-slate-700 text-center">
                             <div className="flex items-center justify-center gap-2 mb-2">
                                 <Heart className="text-pink-400" size={20} />
-                                <p className="text-slate-400 text-xs uppercase tracking-wider font-bold">받은 좋아요</p>
+                                <p className="text-slate-400 text-xs uppercase tracking-wider font-bold">{t.dashboard.stats.likes}</p>
                             </div>
                             <p className="text-3xl font-bold text-pink-500">{totalLikes}</p>
                         </div>
@@ -119,7 +119,7 @@ const Dashboard = ({ user, posts, onDelete, onCopy, onLike, likedPosts, onPostCl
                         <div className="bg-slate-900/50 backdrop-blur-sm p-4 rounded-xl border border-slate-700 text-center">
                             <div className="flex items-center justify-center gap-2 mb-2">
                                 <Copy className="text-green-400" size={20} />
-                                <p className="text-slate-400 text-xs uppercase tracking-wider font-bold">퍼간 횟수</p>
+                                <p className="text-slate-400 text-xs uppercase tracking-wider font-bold">{t.dashboard.stats.copies}</p>
                             </div>
                             <p className="text-3xl font-bold text-green-500">{copyCount}</p>
                         </div>
@@ -129,7 +129,7 @@ const Dashboard = ({ user, posts, onDelete, onCopy, onLike, likedPosts, onPostCl
 
             {/* 내 작품 관리 */}
             <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                <LayoutDashboard className="text-indigo-500" size={20} /> 내 작품 관리
+                <LayoutDashboard className="text-indigo-500" size={20} /> {t.dashboard.title}
             </h3>
 
             {myPosts.length > 0 ? (
@@ -145,6 +145,8 @@ const Dashboard = ({ user, posts, onDelete, onCopy, onLike, likedPosts, onPostCl
                             isDashboard={true}
                             onDelete={onDelete}
                             authorProfile={authorProfiles[post.author]}
+                            language={language}
+                            t={t}
                         />
                     ))}
                 </div>
