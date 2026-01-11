@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Heart, Unlock, Lock, Copy, Trash2, Zap } from 'lucide-react';
 
-const PromptCard = ({ post, onLike, onCopy, isDashboard, onDelete, isLiked, onDetailClick }) => {
+const PromptCard = ({ post, onLike, onCopy, isDashboard, onDelete, isLiked, onDetailClick, onAuthorClick, authorProfile }) => {
     const [showPrompt, setShowPrompt] = useState(false);
 
     return (
@@ -50,7 +50,26 @@ const PromptCard = ({ post, onLike, onCopy, isDashboard, onDelete, isLiked, onDe
                 <div className="flex justify-between items-start mb-3">
                     <div>
                         <h3 className="text-lg font-bold text-white truncate pr-2">{post.title}</h3>
-                        <p className="text-slate-400 text-xs mt-1">By {post.author}</p>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onAuthorClick && onAuthorClick(post.author);
+                            }}
+                            className="flex items-center gap-2 text-slate-400 hover:text-indigo-400 text-xs mt-1 transition-colors cursor-pointer"
+                        >
+                            {authorProfile?.photoURL ? (
+                                <img
+                                    src={authorProfile.photoURL}
+                                    alt={authorProfile.displayName || post.author}
+                                    className="w-5 h-5 rounded-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-[10px] font-bold">
+                                    {(authorProfile?.displayName || post.author).charAt(0).toUpperCase()}
+                                </div>
+                            )}
+                            <span>{authorProfile?.displayName || post.author}</span>
+                        </button>
                     </div>
                     <button
                         onClick={() => onLike(post.id, post.likes)}
@@ -78,7 +97,7 @@ const PromptCard = ({ post, onLike, onCopy, isDashboard, onDelete, isLiked, onDe
                                 {post.prompt}
                             </p>
                             <button
-                                onClick={() => onCopy(post.prompt)}
+                                onClick={() => onCopy(post.prompt, post)}
                                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2 px-3 rounded flex items-center justify-center gap-2 transition-colors"
                             >
                                 <Copy size={12} /> 프롬프트 복사하기

@@ -1,6 +1,19 @@
 import { useState, useEffect } from 'react';
 import { LayoutGrid, LayoutDashboard, Search, Plus, User, LogOut, Image as ImageIcon, Video } from 'lucide-react';
-import { supabase as _supabase } from './lib/supabase';
+import { auth, db, storage } from './lib/firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import {
+  collection,
+  query,
+  orderBy,
+  onSnapshot,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  getDocs
+} from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 // Components
 import Toast from './components/Toast';
@@ -9,6 +22,7 @@ import LoginModal from './components/LoginModal';
 import UploadModal from './components/UploadModal';
 import Dashboard from './components/Dashboard';
 import DetailModal from './components/DetailModal';
+import ArtistGalleryModal from './components/ArtistGalleryModal';
 import Header from './components/Header';
 import Hero from './components/Hero';
 
@@ -21,37 +35,39 @@ const App = () => {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isArtistGalleryOpen, setIsArtistGalleryOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [selectedAuthor, setSelectedAuthor] = useState(null);
 
   const [isUploading, setIsUploading] = useState(false);
   const [toast, setToast] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [authorProfiles, setAuthorProfiles] = useState({});
 
   useEffect(() => {
-    _supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    const { data: { subscription } } = _supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (!session) setCurrentView('home'); // 로그아웃 시 홈으로 이동
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setSession(user ? { user } : null);
+      if (!user) setCurrentView('home');
     });
 
     fetchPosts();
 
-    return () => subscription.unsubscribe();
+    return () => unsubscribe();
   }, []);
 
   const fetchPosts = async () => {
     try {
       setIsLoading(true);
-      const { data, error } = await _supabase
-        .from('posts')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
+      const q = query(collection(db, 'posts'), orderBy('created_at', 'desc'));
+      const querySnapshot = await getDocs(q);
+      const data = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
       setPosts(data);
+
+      // 작가 프로필 정보 로드
+      await loadAuthorProfiles(data);
     } catch (error) {
       console.error("Error fetching posts:", error);
       setToast("데이터를 불러오는데 실패했습니다.");
@@ -60,8 +76,65 @@ const App = () => {
     }
   };
 
+  const loadAuthorProfiles = async (postsData) => {
+    try {
+      // 모든 고유한 작가 이름과 uid 추출
+      const uniqueAuthors = [...new Set(postsData.map(post => post.author))];
+
+      const profilesObj = {};
+
+      // 각 작가의 프로필 정보를 병렬로 로드
+      await Promise.all(
+        uniqueAuthors.map(async (author) => {
+          try {
+            // posts에서 이 작가의 게시물 찾기 (uid 얻기)
+            const authorPost = postsData.find(p => p.author === author);
+            if (!authorPost || !authorPost.authorUid) {
+              // uid가 없으면 기본 정보만 저장
+              profilesObj[author] = {
+                displayName: author,
+                photoURL: null,
+                uid: null
+              };
+              return;
+            }
+
+            // Firestore의 users 컬렉션에서 프로필 정보 로드
+            const userDoc = await getDoc(doc(db, 'users', authorPost.authorUid));
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              profilesObj[author] = {
+                displayName: userData.displayName || author,
+                photoURL: userData.photoURL || null,
+                uid: authorPost.authorUid
+              };
+            } else {
+              // 프로필이 없으면 기본 정보 사용
+              profilesObj[author] = {
+                displayName: author,
+                photoURL: null,
+                uid: authorPost.authorUid
+              };
+            }
+          } catch (err) {
+            console.error(`Error loading profile for ${author}:`, err);
+            profilesObj[author] = {
+              displayName: author,
+              photoURL: null,
+              uid: null
+            };
+          }
+        })
+      );
+
+      setAuthorProfiles(profilesObj);
+    } catch (error) {
+      console.error("Error loading author profiles:", error);
+    }
+  };
+
   const handleLogout = async () => {
-    await _supabase.auth.signOut();
+    await signOut(auth);
     setToast("로그아웃 되었습니다.");
   };
 
@@ -75,6 +148,13 @@ const App = () => {
   }, [likedPosts]);
 
   const handleLike = async (id, currentLikes) => {
+    // 로그인 검증
+    if (!session) {
+      setToast("좋아요를 누르려면 로그인이 필요합니다.");
+      setIsLoginOpen(true);
+      return;
+    }
+
     const isLiked = likedPosts.includes(id);
     const newLikes = isLiked ? Math.max(0, (currentLikes || 0) - 1) : (currentLikes || 0) + 1;
 
@@ -90,8 +170,8 @@ const App = () => {
     }
 
     try {
-      const { error } = await _supabase.from('posts').update({ likes: newLikes }).eq('id', id);
-      if (error) throw error;
+      const postRef = doc(db, 'posts', id);
+      await updateDoc(postRef, { likes: newLikes });
     } catch (error) {
       console.error("Error updating likes:", error);
       setToast("좋아요 반영에 실패했습니다.");
@@ -108,13 +188,22 @@ const App = () => {
   };
 
 
-  const handleCopy = (text) => {
+  const handleCopy = (text, post) => {
     try {
       navigator.clipboard.writeText(text);
       // fallback for older browsers if needed, but modern browsers support clipboard API
     } catch (err) {
       console.log('Clipboard access error', err);
     }
+
+    // 작성자의 복사 횟수 카운트 증가 (비로그인 유저도 가능)
+    if (post && authorProfiles[post.author]?.uid) {
+      const authorUid = authorProfiles[post.author].uid;
+      const key = `copyCount_${authorUid}`;
+      const currentCount = parseInt(localStorage.getItem(key) || '0');
+      localStorage.setItem(key, (currentCount + 1).toString());
+    }
+
     setToast("프롬프트가 클립보드에 복사되었습니다!");
   };
 
@@ -125,8 +214,7 @@ const App = () => {
     setPosts(posts.filter(p => p.id !== id));
 
     try {
-      const { error } = await _supabase.from('posts').delete().eq('id', id);
-      if (error) throw error;
+      await deleteDoc(doc(db, 'posts', id));
       setToast("게시물이 삭제되었습니다.");
     } catch (error) {
       console.error("Error deleting post:", error);
@@ -148,25 +236,42 @@ const App = () => {
     const authorName = session.user.email.split('@')[0];
 
     try {
-      const { data, error } = await _supabase
-        .from('posts')
-        .insert([
-          {
-            title: formData.title,
-            prompt: formData.prompt,
-            image: formData.image,
-            model: formData.model,
-            type: formData.type || 'image',
-            author: authorName,
-            likes: 0,
-            is_premium: false
-          },
-        ])
-        .select();
+      let imageUrl = formData.image;
 
-      if (error) throw error;
+      // Base64 이미지인 경우 Firebase Storage에 업로드
+      if (formData.image.startsWith('data:')) {
+        // Base64를 Blob으로 변환
+        const response = await fetch(formData.image);
+        const blob = await response.blob();
 
-      setPosts([data[0], ...posts]);
+        // 고유한 파일명 생성
+        const fileExtension = blob.type.split('/')[1];
+        const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExtension}`;
+        const storageRef = ref(storage, `posts/${fileName}`);
+
+        // Storage에 업로드
+        await uploadBytes(storageRef, blob);
+
+        // 다운로드 URL 가져오기
+        imageUrl = await getDownloadURL(storageRef);
+      }
+
+      const newPost = {
+        title: formData.title,
+        prompt: formData.prompt,
+        image: imageUrl,
+        model: formData.model,
+        type: formData.type || 'image',
+        author: authorName,
+        authorUid: session.user.uid,
+        likes: 0,
+        is_premium: false,
+        created_at: new Date().toISOString()
+      };
+
+      const docRef = await addDoc(collection(db, 'posts'), newPost);
+
+      setPosts([{ id: docRef.id, ...newPost }, ...posts]);
       setIsUploadOpen(false);
       setToast("성공적으로 등록되었습니다!");
       setActiveCategory(formData.type || 'image'); // 업로드한 카테고리로 이동
@@ -185,6 +290,11 @@ const App = () => {
       setToast("로그인 후 업로드할 수 있습니다.");
       setIsLoginOpen(true);
     }
+  };
+
+  const handleAuthorClick = (authorName) => {
+    setSelectedAuthor(authorName);
+    setIsArtistGalleryOpen(true);
   };
 
   const onPostClick = (post) => {
@@ -277,6 +387,8 @@ const App = () => {
                       onCopy={handleCopy}
                       isLiked={likedPosts.includes(post.id)}
                       onDetailClick={() => onPostClick(post)}
+                      onAuthorClick={handleAuthorClick}
+                      authorProfile={authorProfiles[post.author]}
                     />
                   ))}
                 </div>
@@ -308,6 +420,7 @@ const App = () => {
             onLike={handleLike}
             likedPosts={likedPosts}
             onPostClick={onPostClick}
+            authorProfiles={authorProfiles}
           />
         )}
       </main>
@@ -328,6 +441,18 @@ const App = () => {
           setToast("환영합니다!");
           setIsLoginOpen(false);
         }}
+      />
+
+      <ArtistGalleryModal
+        isOpen={isArtistGalleryOpen}
+        onClose={() => setIsArtistGalleryOpen(false)}
+        authorName={selectedAuthor}
+        posts={posts}
+        onCopy={handleCopy}
+        onLike={handleLike}
+        likedPosts={likedPosts}
+        onPostClick={onPostClick}
+        authorProfiles={authorProfiles}
       />
 
       <UploadModal

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Plus, X, Image as ImageIcon, Video, FileVideo, AlertCircle } from 'lucide-react';
 
 const UploadModal = ({ isOpen, onClose, onSubmit, isUploading }) => {
@@ -25,6 +25,19 @@ const UploadModal = ({ isOpen, onClose, onSubmit, isUploading }) => {
         'Sora (OpenAI)', 'Runway Gen-3 Alpha', 'Luma Dream Machine',
         'Kling AI', 'Pika Art', 'CogVideoX', 'Stable Video Diffusion'
     ];
+
+    // 모달이 열릴 때마다 폼 초기화
+    useEffect(() => {
+        if (isOpen) {
+            setFormData({
+                title: '',
+                prompt: '',
+                image: '',
+                model: uploadType === 'image' ? imageModels[0] : videoModels[0]
+            });
+            setError(null);
+        }
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
