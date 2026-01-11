@@ -29,12 +29,12 @@ const Header = ({
                     }`}>
                     {/* Logo */}
                     <div
-                        className="flex items-center gap-2 md:gap-3 cursor-pointer group"
+                        className="flex items-center gap-1 md:gap-1.5 cursor-pointer group"
                         onClick={() => setCurrentView('home')}
                     >
                         <img src="/logo.svg" alt="AI-Recipe Logo" className="w-10 h-10 md:w-12 md:h-12 group-hover:scale-110 transition-transform duration-300" />
                         <span className="text-lg md:text-2xl font-black text-white tracking-tighter">
-                            AI<span className="text-indigo-500">.</span>RECIPE
+                            AI<span className="text-orange-500">RECIPE</span>
                         </span>
                     </div>
 

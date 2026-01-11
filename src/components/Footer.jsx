@@ -62,7 +62,7 @@ const Footer = ({ setCurrentView }) => {
                 {/* 하단: 로고 및 Copyright */}
                 <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-slate-800">
                     <div
-                        className="flex items-center gap-3 mb-4 md:mb-0 cursor-pointer group"
+                        className="flex items-center gap-1.5 mb-4 md:mb-0 cursor-pointer group"
                         onClick={() => {
                             setCurrentView('home');
                             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -70,7 +70,7 @@ const Footer = ({ setCurrentView }) => {
                     >
                         <img src="/logo.svg" alt="AI-Recipe Logo" className="w-8 h-8 group-hover:scale-110 transition-transform" />
                         <span className="text-sm font-black text-white tracking-tighter">
-                            AI<span className="text-indigo-500">.</span>RECIPE
+                            AI<span className="text-orange-500">RECIPE</span>
                         </span>
                     </div>
 

@@ -26,7 +26,17 @@ const Hero = ({ searchTerm, setSearchTerm }) => {
                             최고의 AI 레시피
                         </span>
                         <div className="absolute -top-4 -right-4 md:-top-10 md:-right-10 animate-bounce">
-                            <Sparkles size={32} className="text-yellow-400 opacity-50 md:w-10 md:h-10" />
+                            <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-8 md:w-16 h-8 md:h-16">
+                                <defs>
+                                    <linearGradient id="hero_book_grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stopColor="#FBBF24" />
+                                        <stop offset="100%" stopColor="#EA580C" />
+                                    </linearGradient>
+                                </defs>
+                                <path d="M256 180L380 120V320L256 380L132 320V120L256 180Z" stroke="url(#hero_book_grad)" strokeWidth="28" strokeLinejoin="round" fill="none" />
+                                <path d="M256 180V380" stroke="url(#hero_book_grad)" strokeWidth="28" strokeLinecap="round" />
+                                <path d="M256 140L265 170L295 180L265 190L256 220L247 190L217 180L247 170L256 140Z" fill="white" />
+                            </svg>
                         </div>
                     </h1>
 
