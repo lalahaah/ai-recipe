@@ -4,41 +4,22 @@ import PromptCard from './PromptCard';
 import { db } from '../lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
-const ArtistGalleryModal = ({ isOpen, onClose, authorName, posts, onCopy, onLike, likedPosts, onPostClick, authorProfiles, language, t }) => {
-    const [authorProfile, setAuthorProfile] = useState(null);
+const ArtistGalleryModal = ({ isOpen, onClose, authorUid, posts, onCopy, onLike, likedPosts, onPostClick, authorProfiles, language, t }) => {
+    // 작가의 프로필 정보 (authorProfiles 상태에서 가져오거나 Firestore에서 로드)
+    const profile = authorProfiles[authorUid];
 
-    // 작가의 작품 필터링
-    const artistPosts = posts.filter(p => p.author === authorName);
+    // 작가의 작품 필터링 (UID 기준)
+    const artistPosts = posts.filter(p => p.authorUid === authorUid || (!p.authorUid && p.author === authorUid));
     const totalLikes = artistPosts.reduce((sum, post) => sum + (post.likes || 0), 0);
 
     const imageCount = artistPosts.filter(p => p.type === 'image').length;
     const videoCount = artistPosts.filter(p => p.type === 'video').length;
 
-    useEffect(() => {
-        if (isOpen && authorName) {
-            loadAuthorProfile();
-        }
-    }, [isOpen, authorName]);
-
-    const loadAuthorProfile = async () => {
-        try {
-            // posts에서 이 작가의 게시물 찾기
-            const authorPost = posts.find(p => p.author === authorName);
-            if (!authorPost) return;
-
-            // 이메일에서 UID를 찾아야 하는데, 현재는 email을 직접 알 수 없으므로
-            // 일단 기본 프로필 정보를 표시
-            setAuthorProfile({
-                displayName: authorName,
-                bio: `${authorName}님의 작품 갤러리`,
-                photoURL: null
-            });
-        } catch (err) {
-            console.error("Error loading author profile:", err);
-        }
-    };
-
     if (!isOpen) return null;
+
+    const displayName = profile?.displayName || artistPosts[0]?.author || 'Unknown';
+    const photoURL = profile?.photoURL;
+    const bio = profile?.bio || (language === 'ko' ? `${displayName}님의 작품 갤러리` : `${displayName}'s Gallery`);
 
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in overflow-y-auto">
@@ -59,8 +40,8 @@ const ArtistGalleryModal = ({ isOpen, onClose, authorName, posts, onCopy, onLike
                     <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
                         {/* 프로필 사진 */}
                         <div className="w-20 h-20 rounded-full overflow-hidden bg-slate-900 border-4 border-slate-700 shadow-lg flex-shrink-0">
-                            {authorProfile?.photoURL ? (
-                                <img src={authorProfile.photoURL} alt="Profile" className="w-full h-full object-cover" />
+                            {photoURL ? (
+                                <img src={photoURL} alt="Profile" className="w-full h-full object-cover" />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600">
                                     <User className="text-white" size={32} />
@@ -71,10 +52,10 @@ const ArtistGalleryModal = ({ isOpen, onClose, authorName, posts, onCopy, onLike
                         {/* 작가 정보 */}
                         <div className="flex-1 text-center md:text-left">
                             <h3 className="text-2xl font-bold text-white mb-2">
-                                {authorProfile?.displayName || authorName}
+                                {displayName}
                             </h3>
                             <p className="text-slate-400 mb-4">
-                                {authorProfile?.bio || `${authorName}님의 AI 아트 컬렉션`}
+                                {bio}
                             </p>
 
                             {/* 통계 */}
@@ -119,7 +100,7 @@ const ArtistGalleryModal = ({ isOpen, onClose, authorName, posts, onCopy, onLike
                                         onPostClick(post);
                                     }}
                                     isDashboard={false}
-                                    authorProfile={authorProfiles[post.author]}
+                                    authorProfile={authorProfiles[post.authorUid]}
                                     language={language}
                                     t={t}
                                 />

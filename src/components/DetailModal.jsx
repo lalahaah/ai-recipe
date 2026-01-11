@@ -1,6 +1,6 @@
 import { X, Copy, Heart, Zap, User, ExternalLink } from 'lucide-react';
 
-const DetailModal = ({ isOpen, post, onClose, onCopy, onLike, isLiked, language, t }) => {
+const DetailModal = ({ isOpen, post, onClose, onCopy, onLike, isLiked, language, t, authorProfile }) => {
     if (!isOpen || !post) return null;
 
     return (
@@ -50,7 +50,7 @@ const DetailModal = ({ isOpen, post, onClose, onCopy, onLike, isLiked, language,
                         </div>
                         <div>
                             <p className="text-slate-500 text-[10px] uppercase tracking-widest font-bold">{t.detail.creator}</p>
-                            <p className="text-white text-sm md:text-base font-medium">{post.author}</p>
+                            <p className="text-white text-sm md:text-base font-medium">{authorProfile?.displayName || post.author}</p>
                         </div>
                     </div>
 

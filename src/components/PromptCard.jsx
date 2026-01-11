@@ -53,7 +53,7 @@ const PromptCard = ({ post, onLike, onCopy, isDashboard, onDelete, isLiked, onDe
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
-                                onAuthorClick && onAuthorClick(post.author);
+                                onAuthorClick && onAuthorClick(post.authorUid || post.author);
                             }}
                             className="flex items-center gap-2 text-slate-400 hover:text-indigo-400 text-xs mt-1 transition-colors cursor-pointer"
                         >

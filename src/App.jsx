@@ -11,6 +11,7 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  getDoc,
   getDocs
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -82,51 +83,46 @@ const App = () => {
 
   const loadAuthorProfiles = async (postsData) => {
     try {
-      // 모든 고유한 작가 이름과 uid 추출
-      const uniqueAuthors = [...new Set(postsData.map(post => post.author))];
+      // 모든 고유한 식별자(uid 또는 author) 추출
+      const uniqueIdentifiers = [...new Set(postsData.map(post => post.authorUid || post.author))];
 
       const profilesObj = {};
 
       // 각 작가의 프로필 정보를 병렬로 로드
       await Promise.all(
-        uniqueAuthors.map(async (author) => {
+        uniqueIdentifiers.map(async (id) => {
           try {
-            // posts에서 이 작가의 게시물 찾기 (uid 얻기)
-            const authorPost = postsData.find(p => p.author === author);
-            if (!authorPost || !authorPost.authorUid) {
-              // uid가 없으면 기본 정보만 저장
-              profilesObj[author] = {
-                displayName: author,
+            // id가 UID인지 확인 (postsData에서 해당 id를 가진 post의 authorUid 확인)
+            const representativePost = postsData.find(p => (p.authorUid || p.author) === id);
+            const uid = representativePost?.authorUid;
+
+            if (uid) {
+              // UID가 있는 경우 Firestore에서 프로필 로드
+              const userDoc = await getDoc(doc(db, 'users', uid));
+              if (userDoc.exists()) {
+                const userData = userDoc.data();
+                profilesObj[id] = {
+                  displayName: userData.displayName || userData.email?.split('@')[0] || representativePost.author,
+                  photoURL: userData.photoURL || null,
+                  uid: uid
+                };
+              } else {
+                profilesObj[id] = {
+                  displayName: representativePost.author,
+                  photoURL: null,
+                  uid: uid
+                };
+              }
+            } else {
+              // UID가 없는 레거시 데이터인 경우 author 정보를 기본으로 사용
+              profilesObj[id] = {
+                displayName: id,
                 photoURL: null,
                 uid: null
               };
-              return;
-            }
-
-            // Firestore의 users 컬렉션에서 프로필 정보 로드
-            const userDoc = await getDoc(doc(db, 'users', authorPost.authorUid));
-            if (userDoc.exists()) {
-              const userData = userDoc.data();
-              profilesObj[author] = {
-                displayName: userData.displayName || author,
-                photoURL: userData.photoURL || null,
-                uid: authorPost.authorUid
-              };
-            } else {
-              // 프로필이 없으면 기본 정보 사용
-              profilesObj[author] = {
-                displayName: author,
-                photoURL: null,
-                uid: authorPost.authorUid
-              };
             }
           } catch (err) {
-            console.error(`Error loading profile for ${author}:`, err);
-            profilesObj[author] = {
-              displayName: author,
-              photoURL: null,
-              uid: null
-            };
+            console.error(`Error loading profile for ${id}:`, err);
           }
         })
       );
@@ -237,26 +233,31 @@ const App = () => {
     }
 
     setIsUploading(true);
-    const authorName = session.user.email.split('@')[0];
 
     try {
+      // 사용자의 최신 닉네임 정보 가져오기
+      let authorName = session.user.email.split('@')[0];
+      let userPhotoURL = null;
+
+      const userDoc = await getDoc(doc(db, 'users', session.user.uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        if (userData.displayName) authorName = userData.displayName;
+        if (userData.photoURL) userPhotoURL = userData.photoURL;
+      }
+
       let imageUrl = formData.image;
 
       // Base64 이미지인 경우 Firebase Storage에 업로드
       if (formData.image.startsWith('data:')) {
-        // Base64를 Blob으로 변환
         const response = await fetch(formData.image);
         const blob = await response.blob();
 
-        // 고유한 파일명 생성
         const fileExtension = blob.type.split('/')[1];
         const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExtension}`;
         const storageRef = ref(storage, `posts/${fileName}`);
 
-        // Storage에 업로드
         await uploadBytes(storageRef, blob);
-
-        // 다운로드 URL 가져오기
         imageUrl = await getDownloadURL(storageRef);
       }
 
@@ -274,11 +275,24 @@ const App = () => {
       };
 
       const docRef = await addDoc(collection(db, 'posts'), newPost);
+      const postWithId = { id: docRef.id, ...newPost };
 
-      setPosts([{ id: docRef.id, ...newPost }, ...posts]);
+      // 로컬 상태 업데이트
+      setPosts([postWithId, ...posts]);
+
+      // 작가 프로필 상태도 즉시 업데이트 (리렌더링 시 닉네임 반영 보장)
+      setAuthorProfiles(prev => ({
+        ...prev,
+        [session.user.uid]: {
+          displayName: authorName,
+          photoURL: userPhotoURL,
+          uid: session.user.uid
+        }
+      }));
+
       setIsUploadOpen(false);
       setToast("성공적으로 등록되었습니다!");
-      setActiveCategory(formData.type || 'image'); // 업로드한 카테고리로 이동
+      setActiveCategory(formData.type || 'image');
     } catch (error) {
       console.error("Error uploading post:", error);
       setToast("업로드 중 오류가 발생했습니다: " + error.message);
@@ -296,8 +310,8 @@ const App = () => {
     }
   };
 
-  const handleAuthorClick = (authorName) => {
-    setSelectedAuthor(authorName);
+  const handleAuthorClick = (authorUid) => {
+    setSelectedAuthor(authorUid);
     setIsArtistGalleryOpen(true);
   };
 
@@ -395,7 +409,7 @@ const App = () => {
                       isLiked={likedPosts.includes(post.id)}
                       onDetailClick={() => onPostClick(post)}
                       onAuthorClick={handleAuthorClick}
-                      authorProfile={authorProfiles[post.author]}
+                      authorProfile={authorProfiles[post.authorUid || post.author]}
                       language={language}
                       t={t}
                     />
@@ -445,6 +459,7 @@ const App = () => {
         isLiked={selectedPost ? likedPosts.includes(selectedPost.id) : false}
         language={language}
         t={t}
+        authorProfile={selectedPost ? authorProfiles[selectedPost.authorUid || selectedPost.author] : null}
       />
 
       <LoginModal
@@ -461,7 +476,7 @@ const App = () => {
       <ArtistGalleryModal
         isOpen={isArtistGalleryOpen}
         onClose={() => setIsArtistGalleryOpen(false)}
-        authorName={selectedAuthor}
+        authorUid={selectedAuthor}
         posts={posts}
         onCopy={handleCopy}
         onLike={handleLike}

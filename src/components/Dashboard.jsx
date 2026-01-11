@@ -9,8 +9,9 @@ const Dashboard = ({ user, posts, onDelete, onCopy, onLike, likedPosts, onPostCl
     const [isProfileEditOpen, setIsProfileEditOpen] = useState(false);
     const [userProfile, setUserProfile] = useState(null);
 
-    // 현재 로그인한 사용자의 ID(이메일 앞부분)와 일치하는 글만 필터링
-    const myPosts = posts.filter(p => p.author === user.email.split('@')[0]);
+    // 현재 로그인한 사용자의 UID 또는 이메일 아이디와 일치하는 글 필터링 (하위 호환성 유지)
+    const authorId = user.email.split('@')[0];
+    const myPosts = posts.filter(p => p.authorUid === user.uid || (!p.authorUid && p.author === authorId));
     const totalLikes = myPosts.reduce((sum, post) => sum + (post.likes || 0), 0);
 
     // 작품 수 통계
@@ -144,7 +145,7 @@ const Dashboard = ({ user, posts, onDelete, onCopy, onLike, likedPosts, onPostCl
                             onDetailClick={() => onPostClick(post)}
                             isDashboard={true}
                             onDelete={onDelete}
-                            authorProfile={authorProfiles[post.author]}
+                            authorProfile={authorProfiles[post.authorUid]}
                             language={language}
                             t={t}
                         />
