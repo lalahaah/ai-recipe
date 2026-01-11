@@ -1,0 +1,86 @@
+import { Mail, MapPin, Phone, Building2 } from 'lucide-react';
+
+const Footer = ({ setCurrentView }) => {
+    const currentYear = new Date().getFullYear();
+
+    return (
+        <footer className="bg-slate-900 border-t border-slate-800 mt-20">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                {/* 상단 링크 섹션 */}
+                <div className="flex flex-wrap justify-start gap-4 md:gap-8 mb-8">
+                    <a href="#" className="text-sm font-bold text-slate-300 hover:text-white transition-colors">
+                        개인정보 처리방침
+                    </a>
+                    <a href="#" className="text-sm font-bold text-slate-300 hover:text-white transition-colors">
+                        서비스 이용약관
+                    </a>
+                    <a href="#" className="text-sm font-bold text-slate-300 hover:text-white transition-colors">
+                        오류 제보
+                    </a>
+                    <a href="#" className="text-sm font-bold text-slate-300 hover:text-white transition-colors">
+                        English
+                    </a>
+                </div>
+
+                {/* 사업자 정보 섹션 */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                    {/* 왼쪽: 회사 기본 정보 */}
+                    <div className="space-y-3">
+                        <div className="flex items-start gap-3">
+                            <Building2 size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
+                            <div>
+                                <p className="text-sm text-slate-300 font-medium">Next Engine Idea Lab (내일)</p>
+                                <p className="text-xs text-slate-500">대표자명: OOO</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                            <MapPin size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
+                            <p className="text-xs text-slate-500">서울특별시 마포구 OOO</p>
+                        </div>
+                    </div>
+
+                    {/* 오른쪽: 연락처 정보 */}
+                    <div className="space-y-3">
+                        <div className="flex items-start gap-3">
+                            <Phone size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
+                            <p className="text-xs text-slate-500">유선번호: OOO-OOOO</p>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                            <Mail size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
+                            <p className="text-xs text-slate-500">OOOO@nextengine.lab</p>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                            <Building2 size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
+                            <p className="text-xs text-slate-500">사업자등록번호: OOO-OO-OOOO</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 하단: 로고 및 Copyright */}
+                <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-slate-800">
+                    <div
+                        className="flex items-center gap-3 mb-4 md:mb-0 cursor-pointer group"
+                        onClick={() => {
+                            setCurrentView('home');
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                    >
+                        <img src="/logo.svg" alt="AI-Recipe Logo" className="w-8 h-8 group-hover:scale-110 transition-transform" />
+                        <span className="text-sm font-black text-white tracking-tighter">
+                            AI<span className="text-indigo-500">.</span>RECIPE
+                        </span>
+                    </div>
+
+                    <p className="text-xs text-slate-500">
+                        © {currentYear} Next Engine Idea Lab. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </footer>
+    );
+};
+
+export default Footer;

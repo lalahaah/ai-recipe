@@ -32,9 +32,7 @@ const Header = ({
                         className="flex items-center gap-2 md:gap-3 cursor-pointer group"
                         onClick={() => setCurrentView('home')}
                     >
-                        <div className="w-8 h-8 md:w-10 md:h-10 bg-indigo-600 rounded-lg md:rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform duration-300">
-                            <LayoutGrid className="w-[18px] h-[18px] md:w-[22px] md:h-[22px] text-white" />
-                        </div>
+                        <img src="/logo.svg" alt="AI-Recipe Logo" className="w-10 h-10 md:w-12 md:h-12 group-hover:scale-110 transition-transform duration-300" />
                         <span className="text-lg md:text-2xl font-black text-white tracking-tighter">
                             AI<span className="text-indigo-500">.</span>RECIPE
                         </span>

@@ -25,6 +25,7 @@ import DetailModal from './components/DetailModal';
 import ArtistGalleryModal from './components/ArtistGalleryModal';
 import Header from './components/Header';
 import Hero from './components/Hero';
+import Footer from './components/Footer';
 
 const App = () => {
   const [session, setSession] = useState(null);
@@ -463,6 +464,8 @@ const App = () => {
       />
 
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
+
+      <Footer setCurrentView={setCurrentView} currentView={currentView} />
     </div>
   );
 };
