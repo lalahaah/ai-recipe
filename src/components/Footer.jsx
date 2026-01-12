@@ -8,9 +8,15 @@ const Footer = ({ setCurrentView, language, setLanguage, t }) => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 {/* 상단 링크 섹션 */}
                 <div className="flex flex-wrap justify-start gap-4 md:gap-8 mb-8">
-                    <a href="#" className="text-sm font-bold text-slate-300 hover:text-white transition-colors">
+                    <button
+                        onClick={() => {
+                            setCurrentView('privacy');
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className="text-sm font-bold text-slate-300 hover:text-white transition-colors"
+                    >
                         {t.footer.privacy}
-                    </a>
+                    </button>
                     <a href="#" className="text-sm font-bold text-slate-300 hover:text-white transition-colors">
                         {t.footer.terms}
                     </a>
@@ -27,47 +33,39 @@ const Footer = ({ setCurrentView, language, setLanguage, t }) => {
 
                 {/* 사업자 정보 섹션 - 한국어일 때만 표시 */}
                 {language === 'ko' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-                        {/* 왼쪽: 회사 기본 정보 */}
-                        <div className="space-y-3">
-                            <div className="flex items-start gap-3">
-                                <Building2 size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
-                                <div>
-                                    <p className="text-sm text-slate-300 font-medium">{t.footer.company}</p>
-                                    <p className="text-xs text-slate-500">{t.footer.ceo}</p>
+                    <div className="mb-12">
+                        <div className="space-y-3 max-w-2xl">
+                            {t.footer.company && (
+                                <div className="flex items-start gap-3">
+                                    <Building2 size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
+                                    <div>
+                                        <p className="text-sm text-slate-300 font-medium">{t.footer.company}</p>
+                                        {t.footer.ceo && <p className="text-xs text-slate-500">{t.footer.ceo}</p>}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
-                            <div className="flex items-start gap-3">
-                                <MapPin size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
-                                <p className="text-xs text-slate-500">{t.footer.address}</p>
-                            </div>
-                        </div>
+                            {t.footer.address && (
+                                <div className="flex items-start gap-3">
+                                    <MapPin size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
+                                    <p className="text-xs text-slate-500">{t.footer.address}</p>
+                                </div>
+                            )}
 
-                        {/* 오른쪽: 연락처 정보 */}
-                        <div className="space-y-3">
-                            <div className="flex items-start gap-3">
-                                <Phone size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
-                                <p className="text-xs text-slate-500">{t.footer.phone}</p>
-                            </div>
-
-                            <div className="flex items-start gap-3">
-                                <Mail size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
-                                <p className="text-xs text-slate-500">{t.footer.email}</p>
-                            </div>
-
-                            <div className="flex items-start gap-3">
-                                <Building2 size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
-                                <p className="text-xs text-slate-500">{t.footer.businessNumber}</p>
-                            </div>
+                            {t.footer.email && (
+                                <div className="flex items-start gap-3">
+                                    <Mail size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
+                                    <p className="text-xs text-slate-500">{t.footer.email}</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}
 
                 {/* 하단: 로고 및 Copyright */}
-                <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-slate-800">
+                <div className="pt-8 border-t border-slate-800">
                     <div
-                        className="flex items-center gap-1.5 mb-4 md:mb-0 cursor-pointer group"
+                        className="flex items-center gap-1.5 mb-3 cursor-pointer group w-fit"
                         onClick={() => {
                             setCurrentView('home');
                             window.scrollTo({ top: 0, behavior: 'smooth' });

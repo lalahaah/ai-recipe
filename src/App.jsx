@@ -28,6 +28,7 @@ import ArtistGalleryModal from './components/ArtistGalleryModal';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Footer from './components/Footer';
+import PrivacyPolicy from './components/PrivacyPolicy';
 
 const App = () => {
   const [session, setSession] = useState(null);
@@ -434,7 +435,7 @@ const App = () => {
               </>
             )}
           </>
-        ) : (
+        ) : currentView === 'dashboard' ? (
           <Dashboard
             user={session.user}
             posts={posts}
@@ -447,6 +448,8 @@ const App = () => {
             language={language}
             t={t}
           />
+        ) : (
+          <PrivacyPolicy setCurrentView={setCurrentView} />
         )}
       </main>
 
